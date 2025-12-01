@@ -545,4 +545,3 @@ if st.session_state.get('juego_completado'):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.rerun()
-
