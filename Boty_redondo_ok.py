@@ -505,10 +505,14 @@ elif st.session_state.etapa == "resultado_final":
     </div>
     """, unsafe_allow_html=True)
     
-    if st.button("💾 Guardar resultados en base de datos"):
-        if guardar_en_supabase():
-            st.success("✅ Resultados guardados correctamente!")
-            st.session_state.juego_completado = True
+    # Guardar automáticamente
+    guardado_exitoso = guardar_en_supabase()
+    if guardado_exitoso:
+        st.success("✅ Resultados guardados automáticamente en la base de datos")
+    else:
+        st.warning("⚠️ No se pudieron guardar los resultados, pero tu puntaje es: {st.session_state.puntaje}")
+    # Mantener esta línea para marcar el juego como completado    
+        st.session_state.juego_completado = True
     
     if st.button("🔄 Jugar de nuevo"):
         # Reiniciar todo
