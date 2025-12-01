@@ -57,13 +57,13 @@ def mostrar_imagenes_pregunta5():
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.image("images/Uno_page-0001.jpg", caption="1. Momo Sampler", use_column_width=True)
+        st.image("Uno_page-0001.jpg", caption="1. Momo Sampler", use_column_width=True)
     with col2:
-        st.image("images/Dos_page-0001.jpg", caption="2. Bang! Bang! Estás liquidado", use_column_width=True)
+        st.image("Dos_page-0001.jpg", caption="2. Bang! Bang! Estás liquidado", use_column_width=True)
     with col3:
-        st.image("images/Tres_page-0001.jpg", caption="3. Luzbelito", use_column_width=True)
+        st.image("Tres_page-0001.jpg", caption="3. Luzbelito", use_column_width=True)
     with col4:
-        st.image("images/Cuatro_page-0001.jpg", caption="4. Honolulú", use_column_width=True)
+        st.image("Cuatro_page-0001.jpg", caption="4. Honolulú", use_column_width=True)
 
 # PANTALLA DE BIENVENIDA
 if st.session_state.etapa == "bienvenida":
@@ -545,3 +545,4 @@ if st.session_state.get('juego_completado'):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.rerun()
+
