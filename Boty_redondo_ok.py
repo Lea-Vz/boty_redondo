@@ -27,26 +27,68 @@ if 'juego_completado' not in st.session_state:
 
 # FUNCIÓN PARA GUARDAR EN SUPABASE
 def guardar_en_supabase():
+    import requests
+    
+    st.write("🧪 MODO PRUEBA - CONEXIÓN A SUPABASE")
+    
+    # Usa los secrets de tu archivo local
+    supabase_url = st.secrets["supabase"]["url"]
+    supabase_key = st.secrets["supabase"]["key"]
+    
+    st.write(f"URL: {supabase_url}")
+    st.write(f"Key (primeros 10 chars): {supabase_key[:10]}...")
+    
+    # Headers necesarios para Supabase
+    headers = {
+        "apikey": supabase_key,
+        "Authorization": f"Bearer {supabase_key}",
+        "Content-Type": "application/json"
+    }
+    
     try:
-        supabase_client = supabase.create_client(
-            st.secrets["supabase"]["url"],
-            st.secrets["supabase"]["key"]
-        )
+        # 1. Prueba la URL base
+        st.write("1. Probando URL base...")
+        response = requests.get(supabase_url, timeout=5)
+        st.success(f"✅ URL base responde. Status: {response.status_code}")
         
-        data = {
-            "nombre": st.session_state.get('nombre', 'Anónimo'),
-            "edad": st.session_state.get('edad', 0),
-            "localidad": st.session_state.get('ciudad', ''),
-            "puntaje_total": st.session_state.puntaje,
-            "respuestas": st.session_state.respuestas,
+        # 2. Prueba el endpoint REST
+        rest_url = f"{supabase_url}/rest/v1/"
+        st.write("2. Probando REST endpoint...")
+        response = requests.get(rest_url, headers=headers, timeout=5)
+        st.success(f"✅ REST endpoint responde. Status: {response.status_code}")
+        
+        # 3. Prueba INSERT en la tabla
+        table_url = f"{supabase_url}/rest/v1/resultados_bot"
+        st.write("3. Probando INSERT en tabla...")
+        
+        # Datos de prueba
+        test_data = {
+            "nombre": "Usuario Prueba",
+            "edad": 25,
+            "localidad": "Ciudad Test",
+            "puntaje_total": 75,
+            "respuestas": {"test": "ok"},
             "fecha_creacion": datetime.now().isoformat()
         }
         
-        response = supabase_client.table("resultados_bot").insert(data).execute()
-        return True
+        response = requests.post(table_url, json=test_data, headers=headers, timeout=5)
+        
+        if response.status_code == 201:
+            st.success("🎉 ¡PRUEBA EXITOSA! Datos insertados en Supabase")
+            st.balloons()
+            return True
+        else:
+            st.error(f"❌ Error al insertar. Status: {response.status_code}")
+            st.write("Respuesta:", response.text)
+            return False
+        
     except Exception as e:
-        st.error(f"Error al guardar: {e}")
+        st.error(f"❌ Error de conexión: {e}")
+        import traceback
+        st.text(traceback.format_exc())
         return False
+
+
 
 # FUNCIÓN PARA MOSTRAR IMÁGENES (Pregunta 5)
 def mostrar_imagenes_pregunta5():
@@ -86,7 +128,7 @@ if st.session_state.etapa == "bienvenida":
     <div class='bienvenida'>
     <h2>¡Bienvenid@!</h2>
     <p>Este Bot corresponde a un trabajo final para la materia Elementos de Programación.</p>
-    <p class='violeta'>Profesores Juliana Reves, Diego Pacheco</p>
+    <p class='violeta'>Profesores Juliana R, Diego P</p>
     <p>Aquí se muestra lo aprendido durante la cursada.</p>
     <p>La temática elegida y el desarrollo es con fines de muestra del funcionamiento.</p>
     <p>Hecha esta aclaración, ¡vamos!</p>
@@ -252,7 +294,7 @@ elif st.session_state.etapa == "pregunta_4":
             st.session_state.puntaje += 5
             st.warning("⚠️ Respuesta parcialmente correcta, suma 5 puntos redondos")
         elif respuesta[0] == "3":
-            st.error("❌ Tu respuesta es preocupante. Anda pensando en buscar otro múltiple choice")
+            st.error("❌ Tu respuesta es preocupante. Anda pensando en buscar otro múltiple choice, igual continuemos")
         else:
             st.error("❌ Respuesta incorrecta, continuemos")
         
@@ -520,6 +562,24 @@ elif st.session_state.etapa == "resultado_final":
             del st.session_state[key]
         st.rerun()
 
+ # BOTÓN DE REINICIO MEJORADO
+    if st.button("🔄 Jugar de nuevo (REINICIO COMPLETO)"):
+        # Guardar datos primero si no se guardaron
+        guardar_en_supabase()
+        
+        # Reiniciar TODO
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        
+        # Forzar recarga completa
+        st.rerun()
+
+
+# Y agrega este botón en la parte visible de tu app (por ejemplo, al final)
+st.sidebar.title("🔧 Pruebas")
+if st.sidebar.button("Probar conexión Supabase"):
+    guardar_en_supabase()
+
 # DESPEDIDA PARA QUIEN NO LE GUSTA LA BANDA
 elif st.session_state.etapa == "despedida_no":
     st.error(f"Que lástima tu respuesta {st.session_state.nombre} de {st.session_state.ciudad}")
@@ -549,3 +609,17 @@ if st.session_state.get('juego_completado'):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.rerun()
+
+# Agrega esto en alguna parte visible, por ejemplo en el sidebar
+st.sidebar.title("🔍 Verificar Datos")
+
+# En algún lugar visible, como el sidebar
+st.sidebar.write("🔍 DEBUG - Estado actual:")
+st.sidebar.write(f"Puntaje: {st.session_state.get('puntaje', 'No definido')}")
+st.sidebar.write(f"Etapa: {st.session_state.get('etapa', 'No definida')}")
+st.sidebar.write(f"Nombre: {st.session_state.get('nombre', 'No definido')}")
+
+if st.sidebar.button("Ver TODAS las variables"):
+    st.write("Todas las variables en session_state:")
+    for key, value in st.session_state.items():
+        st.write(f"{key}: {value}")
