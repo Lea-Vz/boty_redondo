@@ -10,170 +10,10 @@ from io import BytesIO
 
 # Configuración de la página
 st.set_page_config(
-    page_title="Bot Redonditos",
+    page_title="Bot Redondo",
     page_icon="🎵",
     layout="centered"
 )
-
-# FUNCIÓN PARA CALCULAR PUNTAJE FINAL
-def calcular_puntaje_final(respuestas):
-    """
-    Calcula el puntaje basado en las respuestas guardadas
-    """
-    puntaje = 0
-    
-    # Pregunta 1
-    if respuestas.get('pregunta_1') == '4':
-        puntaje += 10
-    
-    # Pregunta 2
-    respuesta_2 = respuestas.get('pregunta_2')
-    if respuesta_2 == '6':
-        puntaje += 10
-    elif respuesta_2 in ['3', '8']:
-        puntaje += 5
-    
-    # Pregunta 3
-    respuesta_3 = respuestas.get('pregunta_3')
-    if respuesta_3 == '7':
-        puntaje += 10
-    elif respuesta_3 == '4':
-        puntaje += 5
-    
-    # Pregunta 4
-    respuesta_4 = respuestas.get('pregunta_4')
-    if respuesta_4 == '1':
-        puntaje += 10
-    elif respuesta_4 == '4':
-        puntaje += 5
-    
-    # Pregunta 5
-    if respuestas.get('pregunta_5') == '4':
-        puntaje += 10
-    
-    # Pregunta 6
-    respuesta_6 = respuestas.get('pregunta_6')
-    if respuesta_6 == '3':
-        puntaje += 10
-    elif respuesta_6 == '1':
-        puntaje += 5
-    elif respuesta_6 == '5':
-        puntaje += 5
-    
-    # Pregunta 7
-    respuesta_7 = respuestas.get('pregunta_7')
-    if respuesta_7 == '1':
-        puntaje += 10
-    elif respuesta_7 == '3':
-        puntaje += 5
-    
-    # Pregunta 8
-    respuesta_8 = respuestas.get('pregunta_8')
-    if respuesta_8 == '3':
-        puntaje += 10
-    elif respuesta_8 and int(respuesta_8) >= 4:  # Cambiado para comparar números
-        puntaje += 5
-    
-    # Pregunta 9
-    respuesta_9 = respuestas.get('pregunta_9')
-    if respuesta_9 == '5':
-        puntaje += 10
-    elif respuesta_9 == '2':
-        puntaje += 5
-    
-    # Pregunta 10
-    respuesta_10 = respuestas.get('pregunta_10')
-    if respuesta_10 == '2':
-        puntaje += 10
-    elif respuesta_10:  # Para todas las respuestas incorrectas de la 10
-        puntaje += 5
-    
-    return puntaje
-
-# FUNCIÓN PARA GUARDAR EN SUPABASE (MODIFICADA)
-def guardar_en_supabase(puntaje_final):
-    try:
-        supabase_client = supabase.create_client(
-            st.secrets["supabase"]["url"],
-            st.secrets["supabase"]["key"]
-        )
-        
-        data = {
-            "nombre": st.session_state.get('nombre', 'Anónimo'),
-            "edad": st.session_state.get('edad', 0),
-            "localidad": st.session_state.get('ciudad', ''),
-            "puntaje_total": puntaje_final,
-            "respuestas": st.session_state.respuestas,
-            "fecha_creacion": datetime.now().isoformat()
-        }
-        
-        response = supabase_client.table("resultados_bot").insert(data).execute()
-        
-        if hasattr(response, 'error') and response.error:
-            st.error(f"Error al guardar: {response.error}")
-            return False
-        else:
-            st.success("✅ Resultados guardados en la base de datos")
-            return True
-            
-    except Exception as e:
-        st.error(f"Error de conexión: {str(e)}")
-        return False
-
-#FUNCIÓN PARA MOSTRAR IMÁGENES (Pregunta 5)(de linea 124 a 158)
-def mostrar_imagenes_pregunta5():
-    st.markdown("### 🎨 Mira bien las 4 imágenes")
-    st.info("**¿Qué disco tiene mal puesto el título?**")
-    
-    #Crear columnas para las imágenes
-    col1, col2, col3, col4 = st.columns(4)
-    
-    #Verificar si las imágenes existen
-    imagenes_existentes = []
-    nombres_imagenes = [
-        "Uno_page-0001.jpg",
-        "Dos_page-0001.jpg", 
-        "Tres_page-0001.jpg",
-        "Cuatro_page-0001.jpg"
-    ]
-    
-    for img in nombres_imagenes:
-        if os.path.exists(f"images/{img}"):
-            imagenes_existentes.append(img)
-        else:
-            st.warning(f"Imagen no encontrada: {img}")
-    
-    #Mostrar imágenes existentes
-    with col1:
-        if "Uno_page-0001.jpg" in imagenes_existentes:
-            st.image("images/Uno_page-0001.jpg", caption="1. Momo Sampler", use_column_width=True)
-    with col2:
-        if "Dos_page-0001.jpg" in imagenes_existentes:
-            st.image("images/Dos_page-0001.jpg", caption="2. Bang! Bang! Estás liquidado", use_column_width=True)
-    with col3:
-        if "Tres_page-0001.jpg" in imagenes_existentes:
-            st.image("images/Tres_page-0001.jpg", caption="3. Luzbelito", use_column_width=True)
-    with col4:
-        if "Cuatro_page-0001.jpg" in imagenes_existentes:
-            st.image("images/Cuatro_page-0001.jpg", caption="4. Honolulú", use_column_width=True)
-            
-# def mostrar_imagenes_pregunta5():  #Mismo bloque de arriba pero simplificado y con rutas absolutas a imagenes
-    # st.markdown("### 🎨 Mira bien las 4 imágenes")
-    # st.info("**¿Qué disco tiene mal puesto el título?**")
-    
-    #1(comentado)Crear columnas para las imágenes
-    # col1, col2, col3, col4 = st.columns(4)
-    
-    #1(comentado)Mostrar imágenes directamente con Streamlit
-    # with col1:
-        # st.image("images/Uno_page-0001.jpg", caption="1. Momo Sampler", use_column_width=True)
-    # with col2:
-        # st.image("images/Dos_page-0001.jpg", caption="2. Bang! Bang! Estás liquidado", use_column_width=True)
-    # with col3:
-        # st.image("images/Tres_page-0001.jpg", caption="3. Luzbelito", use_column_width=True)
-    # with col4:
-        # st.image("images/Cuatro_page-0001.jpg", caption="4. Honolulú", use_column_width=True)
-
 
 # Inicializar session_state para mantener el estado
 if 'puntaje' not in st.session_state:
@@ -184,6 +24,46 @@ if 'etapa' not in st.session_state:
     st.session_state.etapa = "bienvenida"
 if 'juego_completado' not in st.session_state:
     st.session_state.juego_completado = False
+
+# FUNCIÓN PARA GUARDAR EN SUPABASE
+def guardar_en_supabase():
+    try:
+        supabase_client = supabase.create_client(
+            st.secrets["supabase"]["url"],
+            st.secrets["supabase"]["key"]
+        )
+        
+        data = {
+            "nombre": st.session_state.get('nombre', 'Anónimo'),
+            "edad": st.session_state.get('edad', 0),
+            "localidad": st.session_state.get('ciudad', ''),
+            "puntaje_total": st.session_state.puntaje,
+            "respuestas": st.session_state.respuestas,
+            "fecha_creacion": datetime.now().isoformat()
+        }
+        
+        response = supabase_client.table("resultados_bot").insert(data).execute()
+        return True
+    except Exception as e:
+        st.error(f"Error al guardar: {e}")
+        return False
+
+# FUNCIÓN PARA MOSTRAR IMÁGENES (Pregunta 5)
+def mostrar_imagenes_pregunta5():
+    st.markdown("### Mira bien las 4 imágenes")        
+    st.info("**¿Qué disco tiene mal puesto el título?**")
+    
+    # Crear columnas para las imágenes
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.image("images/Uno_page-0001.jpg", caption="1. Momo Sampler", width='stretch')   #use_container_width=True     o   sino usar  use_column_width=True     es para las 4 imagenes igual
+    with col2:
+        st.image("images/Dos_page-0001.jpg", caption="2. Bang! Bang! Estás liquidado", width='stretch')   
+    with col3:
+        st.image("images/Tres_page-0001.jpg", caption="3. Luzbelito", width='stretch')
+    with col4:
+        st.image("images/Cuatro_page-0001.jpg", caption="4. Honolulú", width='stretch')
 
 # PANTALLA DE BIENVENIDA
 if st.session_state.etapa == "bienvenida":
@@ -206,7 +86,7 @@ if st.session_state.etapa == "bienvenida":
     <div class='bienvenida'>
     <h2>¡Bienvenid@!</h2>
     <p>Este Bot corresponde a un trabajo final para la materia Elementos de Programación.</p>
-    <p class='violeta'>Profesores Juliana Reves, Diego Pacheco</p>
+    <p class='violeta'>Profesores Juliana R, Diego P</p>
     <p>Aquí se muestra lo aprendido durante la cursada.</p>
     <p>La temática elegida y el desarrollo es con fines de muestra del funcionamiento.</p>
     <p>Hecha esta aclaración, ¡vamos!</p>
@@ -234,7 +114,7 @@ elif st.session_state.etapa == "datos_personales":
 
 # PREGUNTA INICIAL SOBRE MÚSICA
 elif st.session_state.etapa == "pregunta_musica":
-    st.title("🎸 Cuestionario Redonditos")
+    st.title("🎸 Cuestionario Redondos")
     
     st.write(f"Hola, {st.session_state.nombre}!")
     
@@ -264,10 +144,17 @@ elif st.session_state.etapa == "pregunta_1":
         "7. La Paternal", "8. Ninguna de las anteriores"
     ]
     
-    respuesta = st.radio("Selecciona tu respuesta:", opciones, key="pregunta_1_radio")
+    respuesta = st.radio("Selecciona tu respuesta:", opciones)
     
-    if st.button("Responder", key="pregunta_1_btn"):
+    if st.button("Responder"):
         st.session_state.respuestas["pregunta_1"] = respuesta[0]
+        
+        if respuesta[0] == "4":
+            st.session_state.puntaje += 10
+            st.success("✅ Respuesta correcta, sumaste 10 puntos redondos")
+        else:
+            st.error("❌ Respuesta incorrecta, continuemos")
+            
         st.session_state.etapa = "pregunta_2"
         st.rerun()
 
@@ -287,10 +174,20 @@ elif st.session_state.etapa == "pregunta_2":
         "8. Indio, Skay, Sergio Dawi"
     ]
     
-    respuesta = st.radio("Selecciona tu respuesta:", opciones, key="pregunta_2_radio")
+    respuesta = st.radio("Selecciona tu respuesta:", opciones)
     
-    if st.button("Responder", key="pregunta_2_btn"):
+    if st.button("Responder"):
         st.session_state.respuestas["pregunta_2"] = respuesta[0]
+        
+        if respuesta[0] == "6":
+            st.session_state.puntaje += 10
+            st.success("✅ Respuesta correcta, sumaste 10 puntos redondos")
+        elif respuesta[0] == "3" or respuesta[0] == "8":
+            st.session_state.puntaje += 5
+            st.warning("⚠️ Respuesta parcialmente correcta, suma 5 puntos redondos")
+        else:
+            st.error("❌ Respuesta incorrecta, continuemos")
+            
         st.session_state.etapa = "pregunta_3"
         st.rerun()
 
@@ -310,10 +207,20 @@ elif st.session_state.etapa == "pregunta_3":
         "8. Rene Higuita"
     ]
     
-    respuesta = st.radio("Selecciona tu respuesta:", opciones, key="pregunta_3_radio")
+    respuesta = st.radio("Selecciona tu respuesta:", opciones)
     
-    if st.button("Responder", key="pregunta_3_btn"):
+    if st.button("Responder"):
         st.session_state.respuestas["pregunta_3"] = respuesta[0]
+        
+        if respuesta[0] == "7":
+            st.session_state.puntaje += 10
+            st.success("✅ Respuesta correcta, sumaste 10 puntos redondos")
+        elif respuesta[0] == "4":
+            st.session_state.puntaje += 5
+            st.warning("⚠️ Respuesta parcialmente correcta, suma 5 puntos redondos")
+        else:
+            st.error("❌ Respuesta incorrecta, continuemos")
+            
         st.session_state.etapa = "pregunta_4"
         st.rerun()
 
@@ -333,15 +240,24 @@ elif st.session_state.etapa == "pregunta_4":
         "8. Elisa Carrio"
     ]
     
-    respuesta = st.radio("Selecciona tu respuesta:", opciones, key="pregunta_4_radio")
+    respuesta = st.radio("Selecciona tu respuesta:", opciones)
     
-    if st.button("Responder", key="pregunta_4_btn"):
+    if st.button("Responder"):
         st.session_state.respuestas["pregunta_4"] = respuesta[0]
         
-        # Verificar puntaje parcial para exclusión
-        puntaje_parcial = calcular_puntaje_final(st.session_state.respuestas)
+        if respuesta[0] == "1":
+            st.session_state.puntaje += 10
+            st.success("✅ Respuesta correcta, sumaste 10 puntos redondos")
+        elif respuesta[0] == "4":
+            st.session_state.puntaje += 5
+            st.warning("⚠️ Respuesta parcialmente correcta, suma 5 puntos redondos")
+        elif respuesta[0] == "3":
+            st.error("❌ Tu respuesta es preocupante. Anda pensando en buscar otro múltiple choice")
+        else:
+            st.error("❌ Respuesta incorrecta, continuemos")
         
-        if puntaje_parcial == 0:
+        # Verificar si debe ser excluido por puntaje 0
+        if st.session_state.puntaje == 0:
             st.session_state.etapa = "exclusion"
             st.rerun()
         else:
@@ -351,7 +267,7 @@ elif st.session_state.etapa == "pregunta_4":
 # EXCLUSIÓN POR PUNTAJE 0
 elif st.session_state.etapa == "exclusion":
     st.error("🚫 EXCLUSIÓN")
-    st.write(f"Gracias por participar, {st.session_state.nombre}, pero no sumaste puntos. ¡Será la próxima!")
+    st.write(f"Gracias por participar, {st.session_state.nombre}, pero no sumaste puntos. ¡Será la próxima! Aqui te dejamos el fragmento de una entrevista realizada a Indio Solari")
     
     st.markdown("""
     <div style='background-color: #2b2b2b; color: white; padding: 20px; border-radius: 10px; margin: 20px 0;'>
@@ -362,16 +278,16 @@ elif st.session_state.etapa == "exclusion":
     </div>
     """, unsafe_allow_html=True)
     
-    if st.button("Finalizar", key="exclusion_btn"):
-        # Calcular puntaje final (será 0)
-        puntaje_final = calcular_puntaje_final(st.session_state.respuestas)
-        guardar_en_supabase(puntaje_final)
+    if st.button("Finalizar"):
+        # Guardar automáticamente
+        if guardar_en_supabase():
+            st.success("✅ Resultados guardados automáticamente")
         st.session_state.juego_completado = True
         st.rerun()
 
 # PREGUNTA 5 (CON IMÁGENES)
 elif st.session_state.etapa == "pregunta_5":
-    st.title("🎨 Pregunta 5/10")
+    st.title("❓ Pregunta 5/10")
     
     mostrar_imagenes_pregunta5()
     
@@ -384,10 +300,17 @@ elif st.session_state.etapa == "pregunta_5":
         "5. Están todos correctos"
     ]
     
-    respuesta = st.radio("Selecciona tu respuesta:", opciones, key="pregunta_5_radio")
+    respuesta = st.radio("Selecciona tu respuesta:", opciones)
     
-    if st.button("Responder", key="pregunta_5_btn"):
+    if st.button("Responder"):
         st.session_state.respuestas["pregunta_5"] = respuesta[0]
+        
+        if respuesta[0] == "4":
+            st.session_state.puntaje += 10
+            st.success("✅ Respuesta correcta, sumaste 10 puntos redondos")
+        else:
+            st.error("❌ Respuesta incorrecta, continuemos")
+            
         st.session_state.etapa = "pregunta_6"
         st.rerun()
 
@@ -413,10 +336,23 @@ elif st.session_state.etapa == "pregunta_6":
         "5. Viene a buscarme se come mis sobras, lo tengo encima parece mi sombra na na"
     ]
     
-    respuesta = st.radio("Selecciona tu respuesta:", opciones, key="pregunta_6_radio")
+    respuesta = st.radio("Selecciona tu respuesta:", opciones)
     
-    if st.button("Responder", key="pregunta_6_btn"):
+    if st.button("Responder"):
         st.session_state.respuestas["pregunta_6"] = respuesta[0]
+        
+        if respuesta[0] == "3":
+            st.session_state.puntaje += 10
+            st.success("✅ Respuesta correcta, sumaste 10 puntos redondos")
+        elif respuesta[0] == "1":
+            st.session_state.puntaje += 5
+            st.warning("⚠️ Respuesta parcialmente correcta, suma 5 puntos redondos")
+        elif respuesta[0] == "5":
+            st.session_state.puntaje += 5
+            st.warning("⚠️ Respuesta incorrecta, pero como me gustó tu elección te doy 5 puntos")
+        else:
+            st.error("❌ Respuesta incorrecta, continuemos")
+            
         st.session_state.etapa = "pregunta_7"
         st.rerun()
 
@@ -427,10 +363,20 @@ elif st.session_state.etapa == "pregunta_7":
     
     opciones = ["1. Sí", "2. No", "3. Tal vez"]
     
-    respuesta = st.radio("Selecciona tu respuesta:", opciones, key="pregunta_7_radio")
+    respuesta = st.radio("Selecciona tu respuesta:", opciones)
     
-    if st.button("Responder", key="pregunta_7_btn"):
+    if st.button("Responder"):
         st.session_state.respuestas["pregunta_7"] = respuesta[0]
+        
+        if respuesta[0] == "1":
+            st.session_state.puntaje += 10
+            st.success("✅ Respuesta correcta, sumaste 10 puntos redondos")
+        elif respuesta[0] == "3":
+            st.session_state.puntaje += 5
+            st.warning("⚠️ Respuesta incierta, te doy 5 puntos por tu picardía")
+        else:
+            st.error("❌ Respuesta incorrecta, continuemos")
+            
         st.session_state.etapa = "pregunta_8"
         st.rerun()
 
@@ -448,10 +394,20 @@ elif st.session_state.etapa == "pregunta_8":
         "6. El Abuelo- La N°12, Boca Juniors"
     ]
     
-    respuesta = st.radio("Selecciona tu respuesta:", opciones, key="pregunta_8_radio")
+    respuesta = st.radio("Selecciona tu respuesta:", opciones)
     
-    if st.button("Responder", key="pregunta_8_btn"):
+    if st.button("Responder"):
         st.session_state.respuestas["pregunta_8"] = respuesta[0]
+        
+        if respuesta[0] == "3":
+            st.session_state.puntaje += 10
+            st.success("✅ Respuesta correcta, sumaste 10 puntos redondos")
+        elif respuesta[0] >= "4":
+            st.session_state.puntaje += 5
+            st.warning("⚠️ Respuesta incorrecta, pero te doy 5 puntos por ser consigna de interpretación")
+        else:
+            st.error("❌ Respuesta incorrecta y poco intuitiva, continuemos")
+            
         st.session_state.etapa = "pregunta_9"
         st.rerun()
 
@@ -469,16 +425,26 @@ elif st.session_state.etapa == "pregunta_9":
         "6. Todo un palo"
     ]
     
-    respuesta = st.radio("Selecciona tu respuesta:", opciones, key="pregunta_9_radio")
+    respuesta = st.radio("Selecciona tu respuesta:", opciones)
     
-    if st.button("Responder", key="pregunta_9_btn"):
+    if st.button("Responder"):
         st.session_state.respuestas["pregunta_9"] = respuesta[0]
+        
+        if respuesta[0] == "5":
+            st.session_state.puntaje += 10
+            st.success("✅ Respuesta correcta, sumaste 10 puntos redondos")
+        elif respuesta[0] == "2":
+            st.session_state.puntaje += 5
+            st.warning("⚠️ Respuesta parcialmente correcta, el tema es una reversión por ello te doy 5 puntos")
+        else:
+            st.error("❌ Respuesta incorrecta, continuemos a la última pregunta")
+            
         st.session_state.etapa = "pregunta_10"
         st.rerun()
 
 # PREGUNTA 10
 elif st.session_state.etapa == "pregunta_10":
-    st.title("🎯 Pregunta 10/10")
+    st.title("❓ Pregunta 10/10")
     st.write("""
     **Luego de un recital con graves incidentes, algunos periodistas interceptaron al Indio Solari para preguntarle por los hechos, a lo cual este deslizó:**
     **¿Vos pensás que los pibes nacen malos?** 
@@ -493,10 +459,18 @@ elif st.session_state.etapa == "pregunta_10":
         "5. Estadio Huracán Parque Patricios (1993)"
     ]
     
-    respuesta = st.radio("Selecciona tu respuesta:", opciones, key="pregunta_10_radio")
+    respuesta = st.radio("Selecciona tu respuesta:", opciones)
     
-    if st.button("Responder y ver resultados finales", key="pregunta_10_btn"):
+    if st.button("Responder y ver resultados finales"):
         st.session_state.respuestas["pregunta_10"] = respuesta[0]
+        
+        if respuesta[0] == "2":
+            st.session_state.puntaje += 10
+            st.success("✅ Respuesta correcta, sumaste 10 puntos redondos. Esta era difícil, muy rebuscada.")
+        else:
+            st.session_state.puntaje += 5
+            st.warning("⚠️ Respuesta incorrecta. Te damos 5 puntos por haber llegado hasta acá")
+            
         st.session_state.etapa = "resultado_final"
         st.rerun()
 
@@ -504,28 +478,25 @@ elif st.session_state.etapa == "pregunta_10":
 elif st.session_state.etapa == "resultado_final":
     st.title("🎉 Resultado Final")
     
-    # CALCULAR PUNTAJE FINAL CORRECTAMENTE
-    puntaje_final = calcular_puntaje_final(st.session_state.respuestas)
-    st.session_state.puntaje = puntaje_final
-    
     # Mostrar mensaje según puntaje
-    if puntaje_final == 100:
+    if st.session_state.puntaje == 100:
         st.success(f"🎊 ¡TE FELICITO {st.session_state.nombre.upper()}! 🎊")
         st.success("Sacaste 100 puntos sobre 100. ¡Tu corazón es 100% redondo!")
-    elif 70 <= puntaje_final <= 99:
-        st.info(f"🎸 ¡MUY BIEN {st.session_state.nombre}! 🎸")
-        st.info(f"Sacaste {puntaje_final} puntos. ¡Gran conocimiento de la banda!")
-    elif 30 <= puntaje_final < 70:
-        st.warning(f"🤔 REGULAR {st.session_state.nombre}...")
-        st.warning(f"Sacaste {puntaje_final} puntos. Podría ser mejor, pero gracias por el recorrido.")
-    elif 5 <= puntaje_final < 30:
-        st.error(f"😬 MAL {st.session_state.nombre}...")
-        st.error(f"Sacaste {puntaje_final} puntos. Volvé a {st.session_state.ciudad} y pensá en lo que hiciste.")
+    elif 70 <= st.session_state.puntaje <= 99:
+        st.info(f"🎸 ¡MUY BIEN {st.session_state.nombre}!")
+        st.info(f"Sacaste {st.session_state.puntaje} puntos. ¡Gran conocimiento de la banda!")
+    elif 30 <= st.session_state.puntaje < 70:
+        st.warning(f"Me decepcionaste {st.session_state.nombre}. Sacaste {st.session_state.puntaje}  puntos. Igual gracias por este recorrido. ")
+        st.warning(f"Volve a {st.session_state.ciudad} y pensa en lo que hiciste. Te dejamos un fragmento de entrevista con Indio Solari.") 
+    elif 5 <= st.session_state.puntaje < 30:
+        st.warning(f"🤔 Caradura, irresponsable. Sacaste {st.session_state.puntaje}  puntos")
+        st.warning(f"Volve a {st.session_state.ciudad} y pensa en lo que hiciste. Igual te dejamos un fragmento de entrevista con Indio Solari. Gracias por el recorrido.")
+        
     else:
         st.error(f"🚫 {st.session_state.nombre}, NO SUMASTE PUNTOS")
         st.error("Gracias por participar, ¡será la próxima!")
     
-    st.write(f"**Puntaje final:** {puntaje_final}/100")
+    st.write(f"**Puntaje final:** {st.session_state.puntaje}/100")
     
     # Frase final
     st.markdown("""
@@ -533,17 +504,18 @@ elif st.session_state.etapa == "resultado_final":
     <i>"Ahí está ese verso que dice, con lo que cuesta armar un full... 
     Significa, por un lado, que el amor no es sexo ni nada de eso. 
     Mas bien es el deseo de bien para el otro, algo que no le deseas a todo el mundo.
-    Un día te encontras deseándoselo a alguien... y eso es amor"</i>
+    Un día te encontras deseándoselo a alguien... y eso es amor" Indio</i>
     </div>
     """, unsafe_allow_html=True)
     
-    if st.button("💾 Guardar resultados en base de datos", key="guardar_btn"):
-        if guardar_en_supabase(puntaje_final):
-            st.success("✅ Resultados guardados correctamente!")
-            st.session_state.juego_completado = True
-            st.rerun()
+    # ⭐⭐ GUARDAR AUTOMÁTICAMENTE ⭐⭐
+    if guardar_en_supabase():
+        st.success("✅..........................................")
+        st.session_state.juego_completado = True
+    else:
+        st.warning("⚠️ No se pudieron guardar los resultados. Intenta de nuevo.")
     
-    if st.button("🔄 Jugar de nuevo", key="reiniciar_btn"):
+    if st.button("🔄 Jugar de nuevo"):
         # Reiniciar todo
         for key in list(st.session_state.keys()):
             del st.session_state[key]
@@ -559,13 +531,14 @@ elif st.session_state.etapa == "despedida_no":
     <i>"Ahí está ese verso que dice, con lo que cuesta armar un full... 
     Significa, por un lado, que el amor no es sexo ni nada de eso. 
     Mas bien es el deseo de bien para el otro, algo que no le deseas a todo el mundo.
-    Un día te encontras deseándoselo a alguien... y eso es amor"</i>
+    Un día te encontras deseándoselo a alguien... y eso es amor" Indio</i>
     </div>
     """, unsafe_allow_html=True)
     
-    if st.button("Finalizar", key="despedida_btn"):
-        puntaje_final = 0  # No jugó, puntaje 0
-        guardar_en_supabase(puntaje_final)
+    if st.button("Finalizar"):
+        # Guardar automáticamente
+        if guardar_en_supabase():
+            st.success("✅ .........................")
         st.session_state.juego_completado = True
         st.rerun()
 
@@ -575,7 +548,7 @@ if st.session_state.get('juego_completado'):
     st.sidebar.write(f"**Jugador:** {st.session_state.get('nombre', 'Anónimo')}")
     st.sidebar.write(f"**Puntaje:** {st.session_state.puntaje}")
     
-    if st.sidebar.button("🎮 Nuevo juego", key="nuevo_juego_sidebar"):
+    if st.sidebar.button("🎮 Nuevo juego"):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.rerun()
