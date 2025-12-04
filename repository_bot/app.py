@@ -57,13 +57,13 @@ def mostrar_imagenes_pregunta5():
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.image("images/Uno_page-0001.jpg", caption="1. Momo Sampler", width='stretch')   #use_container_width=True     o   sino usar  use_column_width=True     es para las 4 imagenes igual
+        st.image("repository_bot/images/Uno_page-0001.jpg", caption="1. Momo Sampler", width='stretch')   #use_container_width=True     o   sino usar  use_column_width=True     es para las 4 imagenes igual
     with col2:
-        st.image("images/Dos_page-0001.jpg", caption="2. Bang! Bang! Estás liquidado", width='stretch')   
+        st.image("repository_bot/images/Dos_page-0001.jpg", caption="2. Bang! Bang! Estás liquidado", width='stretch')   
     with col3:
-        st.image("images/Tres_page-0001.jpg", caption="3. Luzbelito", width='stretch')
+        st.image("repository_bot/images/Tres_page-0001.jpg", caption="3. Luzbelito", width='stretch')
     with col4:
-        st.image("images/Cuatro_page-0001.jpg", caption="4. Honolulú", width='stretch')
+        st.image("repository_bot/images/Cuatro_page-0001.jpg", caption="4. Honolulú", width='stretch')
 
 # PANTALLA DE BIENVENIDA
 if st.session_state.etapa == "bienvenida":
@@ -551,4 +551,5 @@ if st.session_state.get('juego_completado'):
     if st.sidebar.button("🎮 Nuevo juego"):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
+
         st.rerun()
