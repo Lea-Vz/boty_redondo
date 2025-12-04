@@ -10,7 +10,7 @@ from io import BytesIO
 
 # Configuración de la página
 st.set_page_config(
-    page_title="Bot Redonditos",
+    page_title="Bot Redondo",
     page_icon="🎵",
     layout="centered"
 )
@@ -50,20 +50,20 @@ def guardar_en_supabase():
 
 # FUNCIÓN PARA MOSTRAR IMÁGENES (Pregunta 5)
 def mostrar_imagenes_pregunta5():
-    st.markdown("### 🎨 Mira bien las 4 imágenes")
+    st.markdown("### Mira bien las 4 imágenes")        
     st.info("**¿Qué disco tiene mal puesto el título?**")
     
     # Crear columnas para las imágenes
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.image("Uno_page-0001.jpg", caption="1. Momo Sampler", use_column_width=True)
+        st.image("images/Uno_page-0001.jpg", caption="1. Momo Sampler", width='stretch')   #use_container_width=True     o   sino usar  use_column_width=True     es para las 4 imagenes igual
     with col2:
-        st.image("Dos_page-0001.jpg", caption="2. Bang! Bang! Estás liquidado", use_column_width=True)
+        st.image("images/Dos_page-0001.jpg", caption="2. Bang! Bang! Estás liquidado", width='stretch')   
     with col3:
-        st.image("Tres_page-0001.jpg", caption="3. Luzbelito", use_column_width=True)
+        st.image("images/Tres_page-0001.jpg", caption="3. Luzbelito", width='stretch')
     with col4:
-        st.image("Cuatro_page-0001.jpg", caption="4. Honolulú", use_column_width=True)
+        st.image("images/Cuatro_page-0001.jpg", caption="4. Honolulú", width='stretch')
 
 # PANTALLA DE BIENVENIDA
 if st.session_state.etapa == "bienvenida":
@@ -86,7 +86,7 @@ if st.session_state.etapa == "bienvenida":
     <div class='bienvenida'>
     <h2>¡Bienvenid@!</h2>
     <p>Este Bot corresponde a un trabajo final para la materia Elementos de Programación.</p>
-    <p class='violeta'>Profesores Juliana Reves, Diego Pacheco</p>
+    <p class='violeta'>Profesores Juliana R, Diego P</p>
     <p>Aquí se muestra lo aprendido durante la cursada.</p>
     <p>La temática elegida y el desarrollo es con fines de muestra del funcionamiento.</p>
     <p>Hecha esta aclaración, ¡vamos!</p>
@@ -114,7 +114,7 @@ elif st.session_state.etapa == "datos_personales":
 
 # PREGUNTA INICIAL SOBRE MÚSICA
 elif st.session_state.etapa == "pregunta_musica":
-    st.title("🎸 Cuestionario Redonditos")
+    st.title("🎸 Cuestionario Redondos")
     
     st.write(f"Hola, {st.session_state.nombre}!")
     
@@ -267,7 +267,7 @@ elif st.session_state.etapa == "pregunta_4":
 # EXCLUSIÓN POR PUNTAJE 0
 elif st.session_state.etapa == "exclusion":
     st.error("🚫 EXCLUSIÓN")
-    st.write(f"Gracias por participar, {st.session_state.nombre}, pero no sumaste puntos. ¡Será la próxima!")
+    st.write(f"Gracias por participar, {st.session_state.nombre}, pero no sumaste puntos. ¡Será la próxima! Aqui te dejamos el fragmento de una entrevista realizada a Indio Solari")
     
     st.markdown("""
     <div style='background-color: #2b2b2b; color: white; padding: 20px; border-radius: 10px; margin: 20px 0;'>
@@ -279,13 +279,15 @@ elif st.session_state.etapa == "exclusion":
     """, unsafe_allow_html=True)
     
     if st.button("Finalizar"):
-        guardar_en_supabase()
+        # Guardar automáticamente
+        if guardar_en_supabase():
+            st.success("✅ Resultados guardados automáticamente")
         st.session_state.juego_completado = True
         st.rerun()
 
 # PREGUNTA 5 (CON IMÁGENES)
 elif st.session_state.etapa == "pregunta_5":
-    st.title("🎨 Pregunta 5/10")
+    st.title("❓ Pregunta 5/10")
     
     mostrar_imagenes_pregunta5()
     
@@ -442,7 +444,7 @@ elif st.session_state.etapa == "pregunta_9":
 
 # PREGUNTA 10
 elif st.session_state.etapa == "pregunta_10":
-    st.title("🎯 Pregunta 10/10")
+    st.title("❓ Pregunta 10/10")
     st.write("""
     **Luego de un recital con graves incidentes, algunos periodistas interceptaron al Indio Solari para preguntarle por los hechos, a lo cual este deslizó:**
     **¿Vos pensás que los pibes nacen malos?** 
@@ -481,14 +483,15 @@ elif st.session_state.etapa == "resultado_final":
         st.success(f"🎊 ¡TE FELICITO {st.session_state.nombre.upper()}! 🎊")
         st.success("Sacaste 100 puntos sobre 100. ¡Tu corazón es 100% redondo!")
     elif 70 <= st.session_state.puntaje <= 99:
-        st.info(f"🎸 ¡MUY BIEN {st.session_state.nombre}! 🎸")
+        st.info(f"🎸 ¡MUY BIEN {st.session_state.nombre}!")
         st.info(f"Sacaste {st.session_state.puntaje} puntos. ¡Gran conocimiento de la banda!")
     elif 30 <= st.session_state.puntaje < 70:
-        st.warning(f"🤔 REGULAR {st.session_state.nombre}...")
-        st.warning(f"Sacaste {st.session_state.puntaje} puntos. Podría ser mejor, pero gracias por el recorrido.")
+        st.warning(f"Me decepcionaste {st.session_state.nombre}. Sacaste {st.session_state.puntaje}  puntos. Igual gracias por este recorrido. ")
+        st.warning(f"Volve a {st.session_state.ciudad} y pensa en lo que hiciste. Te dejamos un fragmento de entrevista con Indio Solari.") 
     elif 5 <= st.session_state.puntaje < 30:
-        st.error(f"😬 MAL {st.session_state.nombre}...")
-        st.error(f"Sacaste {st.session_state.puntaje} puntos. Volvé a {st.session_state.ciudad} y pensá en lo que hiciste.")
+        st.warning(f"🤔 Caradura, irresponsable. Sacaste {st.session_state.puntaje}  puntos")
+        st.warning(f"Volve a {st.session_state.ciudad} y pensa en lo que hiciste. Igual te dejamos un fragmento de entrevista con Indio Solari. Gracias por el recorrido.")
+        
     else:
         st.error(f"🚫 {st.session_state.nombre}, NO SUMASTE PUNTOS")
         st.error("Gracias por participar, ¡será la próxima!")
@@ -501,14 +504,16 @@ elif st.session_state.etapa == "resultado_final":
     <i>"Ahí está ese verso que dice, con lo que cuesta armar un full... 
     Significa, por un lado, que el amor no es sexo ni nada de eso. 
     Mas bien es el deseo de bien para el otro, algo que no le deseas a todo el mundo.
-    Un día te encontras deseándoselo a alguien... y eso es amor"</i>
+    Un día te encontras deseándoselo a alguien... y eso es amor" Indio</i>
     </div>
     """, unsafe_allow_html=True)
     
-    if st.button("💾 Guardar resultados en base de datos"):
-        if guardar_en_supabase():
-            st.success("✅ Resultados guardados correctamente!")
-            st.session_state.juego_completado = True
+    # ⭐⭐ GUARDAR AUTOMÁTICAMENTE ⭐⭐
+    if guardar_en_supabase():
+        st.success("✅..........................................")
+        st.session_state.juego_completado = True
+    else:
+        st.warning("⚠️ No se pudieron guardar los resultados. Intenta de nuevo.")
     
     if st.button("🔄 Jugar de nuevo"):
         # Reiniciar todo
@@ -526,12 +531,14 @@ elif st.session_state.etapa == "despedida_no":
     <i>"Ahí está ese verso que dice, con lo que cuesta armar un full... 
     Significa, por un lado, que el amor no es sexo ni nada de eso. 
     Mas bien es el deseo de bien para el otro, algo que no le deseas a todo el mundo.
-    Un día te encontras deseándoselo a alguien... y eso es amor"</i>
+    Un día te encontras deseándoselo a alguien... y eso es amor" Indio</i>
     </div>
     """, unsafe_allow_html=True)
     
     if st.button("Finalizar"):
-        guardar_en_supabase()
+        # Guardar automáticamente
+        if guardar_en_supabase():
+            st.success("✅ .........................")
         st.session_state.juego_completado = True
         st.rerun()
 
@@ -545,4 +552,3 @@ if st.session_state.get('juego_completado'):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.rerun()
-
