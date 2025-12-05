@@ -480,10 +480,10 @@ elif st.session_state.etapa == "resultado_final":
     
     # Mostrar mensaje según puntaje
     if st.session_state.puntaje == 100:
-        st.success(f"🎊 ¡TE FELICITO {st.session_state.nombre.upper()}! 🎊")
+        st.success(f"¡TE FELICITO {st.session_state.nombre.upper()}! ")
         st.success("Sacaste 100 puntos sobre 100. ¡Tu corazón es 100% redondo!")
     elif 70 <= st.session_state.puntaje <= 99:
-        st.info(f"🎸 ¡MUY BIEN {st.session_state.nombre}!")
+        st.info(f"🎸 ¡MUY BIEN {st.session_state.nombre} de {st.session_state.ciudad}!")
         st.info(f"Sacaste {st.session_state.puntaje} puntos. ¡Gran conocimiento de la banda!")
     elif 30 <= st.session_state.puntaje < 70:
         st.warning(f"Me decepcionaste {st.session_state.nombre}. Sacaste {st.session_state.puntaje}  puntos. Igual gracias por este recorrido. ")
