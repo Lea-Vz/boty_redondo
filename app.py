@@ -476,7 +476,7 @@ elif st.session_state.etapa == "pregunta_10":
 
 # RESULTADO FINAL
 elif st.session_state.etapa == "resultado_final":
-    st.title("🎉 Resultado Final")
+    st.title("Resultado Final")
     
     # Mostrar mensaje según puntaje
     if st.session_state.puntaje == 100:
